@@ -1,15 +1,22 @@
 package com.wan.android.compose.ui.theme
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 sealed interface ThemeScheme
 object GreenTheme:ThemeScheme
@@ -20,7 +27,6 @@ object RedTheme:ThemeScheme
 fun AppTheme(
     pallet: ThemeScheme = AppTheme.pallet, content: @Composable () -> Unit
 ) {
-
     val (colorTheme, appColors) = pallet.colors
     ProvideAppColors(colors = appColors) {
         MaterialTheme(
@@ -56,6 +62,7 @@ object AppTheme {
 
 private val AppLightColorPalette = AppColors(
     isDark = false,
+    statusBarColor = Color.Red,
     bottomTabSelectedColor = Color.Red,
     bottomTabDefaultColor = Color.Gray
 
@@ -63,6 +70,7 @@ private val AppLightColorPalette = AppColors(
 
 private val AppDarkColorPalette = AppColors(
     isDark = true,
+    statusBarColor = Color.Green,
     bottomTabSelectedColor = Color.Green,
     bottomTabDefaultColor = Color.Gray
 )

@@ -10,11 +10,16 @@ import androidx.compose.ui.graphics.Color
 
 @Stable
 class AppColors(
-    isDark: Boolean, bottomTabDefaultColor: Color, bottomTabSelectedColor: Color
+    isDark: Boolean,
+    statusBarColor:Color,
+    bottomTabDefaultColor: Color,
+    bottomTabSelectedColor: Color
 ) {
     var isDark by mutableStateOf(isDark)
         private set
     var bottomTabDefaultColor by mutableStateOf(bottomTabDefaultColor)
+        private set
+    var statusBarColor by mutableStateOf(statusBarColor)
         private set
     var bottomTabSelectedColor by mutableStateOf(bottomTabSelectedColor)
         private set
@@ -23,8 +28,9 @@ class AppColors(
         this.isDark = colors.isDark
         this.bottomTabDefaultColor = colors.bottomTabDefaultColor
         this.bottomTabSelectedColor = colors.bottomTabSelectedColor
+        this.statusBarColor = colors.statusBarColor
     }
 
-    fun copy() = AppColors(isDark, bottomTabDefaultColor, bottomTabSelectedColor)
+    fun copy() = AppColors(isDark, statusBarColor,bottomTabDefaultColor, bottomTabSelectedColor)
 }
 

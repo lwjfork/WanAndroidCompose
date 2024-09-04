@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WanAndroidCompose</string>
+    <string name="title_activity_change_app_themem">ChangeAppThememActivity</string>
 </resources>
