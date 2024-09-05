@@ -34,14 +34,9 @@ fun SafePageContent(
     bottomBar: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
-    findWindow()?.statusBarColor = MaterialTheme.appColors.statusBarColor.toArgb()
-    rememberWindowInsetController()?.let {
-        it.isAppearanceLightStatusBars = !MaterialTheme.appColors.isDark
-        it.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        it.hide(WindowInsetsCompat.Type.navigationBars())
-    }
     AppTheme {
+        StatusBar()
+        NavigationBar()
         Scaffold(
             modifier = modifier.fillMaxSize(),
             bottomBar = bottomBar,
@@ -65,6 +60,24 @@ private tailrec fun Context.findWindow(): Window? =
         is ContextWrapper -> baseContext.findWindow()
         else -> null
     }
+
+@Composable
+fun StatusBar(){
+    findWindow()?.statusBarColor = MaterialTheme.appColors.statusBarColor.toArgb()
+    rememberWindowInsetController()?.let {
+        it.isAppearanceLightStatusBars = !MaterialTheme.appColors.isDark
+        it.systemBarsBehavior =  WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
+}
+@Composable
+fun NavigationBar(){
+    rememberWindowInsetController()?.let {
+        it.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        it.hide(WindowInsetsCompat.Type.navigationBars())
+    }
+}
+
 
 @Composable
 fun rememberWindowInsetController(

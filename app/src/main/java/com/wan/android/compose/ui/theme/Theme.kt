@@ -1,22 +1,15 @@
 package com.wan.android.compose.ui.theme
 
-import android.app.Activity
-import android.widget.Toast
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 
 sealed interface ThemeScheme
 object GreenTheme:ThemeScheme
@@ -60,19 +53,19 @@ object AppTheme {
     }
 }
 
-private val AppLightColorPalette = AppColors(
+private val AppReaColorPalette = AppColors(
     isDark = false,
     statusBarColor = Color.Red,
     bottomTabSelectedColor = Color.Red,
-    bottomTabDefaultColor = Color.Gray
+    bottomTabDefaultColor = Color.Black
 
 )
 
-private val AppDarkColorPalette = AppColors(
+private val AppGreenColorPalette = AppColors(
     isDark = true,
     statusBarColor = Color.Green,
     bottomTabSelectedColor = Color.Green,
-    bottomTabDefaultColor = Color.Gray
+    bottomTabDefaultColor = Color.Black
 )
 
 @Composable
@@ -87,14 +80,14 @@ fun ProvideAppColors(
 }
 
 private val LocalAppColors = staticCompositionLocalOf {
-    AppLightColorPalette
+    AppGreenColorPalette
 }
 
 
 /* 针对当前主题配置颜色板扩展属性 */
 private val ThemeScheme.colors: Pair<ThemeScheme, AppColors>
     get() = when (this) {
-        GreenTheme -> GreenTheme to AppDarkColorPalette
-        RedTheme -> RedTheme to AppLightColorPalette
+        GreenTheme -> GreenTheme to AppGreenColorPalette
+        RedTheme -> RedTheme to AppReaColorPalette
     }
 
