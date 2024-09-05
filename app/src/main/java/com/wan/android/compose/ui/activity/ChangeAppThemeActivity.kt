@@ -14,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.wan.android.compose.component.SafePageContent
+import com.wan.android.compose.component.ImmersiveScreenPageContent
 import com.wan.android.compose.ui.theme.AppTheme
 import com.wan.android.compose.ui.theme.GreenTheme
 import com.wan.android.compose.ui.theme.RedTheme
@@ -24,7 +24,7 @@ class ChangeAppThemeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SafePageContent{
+            ImmersiveScreenPageContent{
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

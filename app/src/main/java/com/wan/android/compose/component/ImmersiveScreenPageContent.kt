@@ -28,7 +28,7 @@ import com.wan.android.compose.ui.theme.appColors
  * @version: 1.0
  */
 @Composable
-fun SafePageContent(
+fun ImmersiveScreenPageContent(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},

@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.wan.android.compose.component.BottomTab
-import com.wan.android.compose.component.SafePageContent
+import com.wan.android.compose.component.ImmersiveScreenPageContent
 import com.wan.android.compose.ui.activity.ChangeAppThemeActivity
 
 
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SafePageContent(bottomBar = { BottomBar()}){
+            ImmersiveScreenPageContent(bottomBar = { BottomBar()}){
                 Column(modifier = Modifier
                     .fillMaxSize()) {
                     Text(
