@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.theme
+package com.wan.android.compose.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

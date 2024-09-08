@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.theme
+package com.wan.android.compose.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp

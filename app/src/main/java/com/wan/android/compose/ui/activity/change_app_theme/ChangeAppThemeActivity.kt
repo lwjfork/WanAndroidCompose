@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.activity
+package com.wan.android.compose.ui.activity.change_app_theme
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,15 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.wan.android.compose.component.ImmersiveScreenPageContent
-import com.wan.android.compose.ui.theme.ThemeColors
-import com.wan.android.compose.ui.theme.switchAppTheme
+import com.wan.android.compose.theme.ThemeColors
+import com.wan.android.compose.theme.switchAppTheme
 
 class ChangeAppThemeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ImmersiveScreenPageContent{
+            ImmersiveScreenPageContent {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -46,4 +46,3 @@ class ChangeAppThemeActivity : ComponentActivity() {
         }
     }
 }
-

@@ -6,9 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
-import com.wan.android.compose.ui.activity.ChangeAppThemeActivity
-import com.wan.android.compose.ui.theme.readThemeFromAssets
-import kotlinx.coroutines.delay
+import com.wan.android.compose.theme.readThemeFromAssets
+import com.wan.android.compose.ui.activity.main.MainActivity
 import kotlinx.coroutines.launch
 
 /**
@@ -27,6 +26,7 @@ class SplashActivity : ComponentActivity() {
             val intent = Intent()
             intent.setClass(applicationContext, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
         setContent {
 

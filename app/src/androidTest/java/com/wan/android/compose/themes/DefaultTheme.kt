@@ -7,9 +7,9 @@ package com.wan.android.compose.themes
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
-import com.wan.android.compose.ui.theme.AppThemeColor
-import com.wan.android.compose.ui.theme.ColorPalette
-import com.wan.android.compose.ui.theme.CustomColorScheme
+import com.wan.android.compose.theme.AppThemeColor
+import com.wan.android.compose.theme.ColorPalette
+import com.wan.android.compose.theme.CustomColorScheme
 
 /**
  * 颜色模版

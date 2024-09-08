@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.theme
+package com.wan.android.compose.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -42,10 +42,10 @@ private object AppTheme {
     var seedColor: Color by mutableStateOf(Color(0xFF8F13A8))
 
     fun switch(seedColor: Color) {
-        if (this.seedColor == seedColor) {
+        if (AppTheme.seedColor == seedColor) {
             return
         }
-        this.seedColor = seedColor
+        AppTheme.seedColor = seedColor
     }
 }
 
@@ -73,7 +73,8 @@ private val LocalAppColors = staticCompositionLocalOf {
 /* 针对当前主题配置颜色板扩展属性 */
 private val Color.colors: Pair<Color, AppThemeColor>
     @Composable
-    get() = Pair(this, if(isSystemInDarkTheme()){ThemeColors.get(this)!!.darkTheme}else{
+    get() = Pair(this, if(isSystemInDarkTheme()){
+        ThemeColors.get(this)!!.darkTheme}else{
         ThemeColors.get(this)!!.lightTheme
     })
 

@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.theme
+package com.wan.android.compose.theme
 
 import android.content.Context
 import androidx.compose.material3.ColorScheme

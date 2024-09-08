@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.theme
+package com.wan.android.compose.theme
 
 /**
  * @Description:
