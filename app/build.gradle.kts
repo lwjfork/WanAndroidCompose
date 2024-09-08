@@ -67,4 +67,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.retrofit.coroutins)
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.navigation.compose)
 }

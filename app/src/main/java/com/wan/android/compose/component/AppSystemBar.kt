@@ -143,9 +143,9 @@ fun AppTopBarIconContainer(painter: Painter, onClick: () -> Unit = {}) {
 
 @Composable
 fun AppNavigationBar(
-    tab: List<Pair<String, Int>>,
-    selectedIndex: Int,
-    onSelectTab: (index: Int) -> Unit,
+    tab: List<Triple<String, Int, String>>,
+    selectedIndex: Triple<String, Int, String>,
+    onSelectTab: (index: Triple<String, Int, String>) -> Unit,
     selectedIconColor: Color = MaterialTheme.colorScheme.primary,
     unSelectedIconColor: Color = MaterialTheme.colorScheme.onBackground,
     selectLabelColor: Color = MaterialTheme.colorScheme.primary,
@@ -180,31 +180,33 @@ fun AppNavigationBar(
                                 ), interactionSource = remember {
                                     MutableInteractionSource()
                                 }) {
-                                selectTab.value(index)
+                                selectTab.value(tab[index])
                             },
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                modifier = if (index == selectedIndex) {
+                                modifier = if (tab[index].third == selectedIndex.third) {
                                     Modifier.size(selectedIconSize)
                                 } else {
                                     Modifier.size(unSelectedIconSize)
                                 },
                                 painter = painterResource(id = tab.get(index).second),
                                 contentDescription = "Localized description",
-                                tint = if (index == selectedIndex) {
+                                tint = if (tab[index].third == selectedIndex.third) {
                                     selectedIconColor
                                 } else {
                                     unSelectedIconColor
                                 },
                             )
                             Text(
-                                text = tab.get(index).first, color = if (index == selectedIndex) {
+                                text = tab.get(index).first,
+                                color = if (tab[index].third == selectedIndex.third) {
                                     selectLabelColor
                                 } else {
                                     unSelectedLabelColor
-                                }, fontSize = if (index == selectedIndex) {
+                                },
+                                fontSize = if (tab[index].third == selectedIndex.third) {
                                     selectedTextSize
                                 } else {
                                     unSelectedTextSize

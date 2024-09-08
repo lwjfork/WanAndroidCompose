@@ -4,13 +4,17 @@ minSdk= "21"
 targetSdk= "34"
 agp = "8.5.0"
 kotlin = "1.9.0"
-coreKtx = "1.10.1"
+coreKtx = "1.12.0"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
 composeBom = "2024.04.01"
 okhttpBom = "4.12.0"
 retrofit = "2.11.0"
 retrofitGson = "com.squareup.retrofit2:converter-gson"
+androidxFragment = "1.6.1"
+androidxAppcompat = "1.6.1"
+androidxViewpager2 = "1.0.0"
+navigationCompose = "2.8.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -29,7 +33,10 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 retrofit-coroutins = "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
 kotlin-poet = { group = "com.squareup", name = "kotlinpoet-jvm",version="1.18.1" }
-
+androidx-fragment = {group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment"}
+androidx-appcompat = {group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat"}
+androidx-viewpager2 = {group = "androidx.viewpager2", name = "viewpager2", version.ref = "androidxViewpager2"}
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
