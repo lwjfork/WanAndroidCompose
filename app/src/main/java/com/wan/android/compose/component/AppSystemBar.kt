@@ -1,7 +1,5 @@
 package com.wan.android.compose.component
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +25,6 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -108,7 +104,6 @@ fun AppCenterAlignedTopAppBar(
             actions()
         }
     }
-//    windowInsets = TopAppBarDefaults.windowInsets.exclude(WindowInsets.Companion.systemBars),
     CenterAlignedTopAppBar(
         title = titleComposable,
         navigationIcon = navigationIconComposable,
@@ -120,22 +115,16 @@ fun AppCenterAlignedTopAppBar(
 
 @Composable
 fun AppTopBarIconContainer(painter: Painter, onClick: () -> Unit = {}) {
-    Box(modifier = Modifier
-        .height(40.dp)
-        .width(40.dp)
-        .wrapContentSize()
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = rememberRipple(
-                bounded = false,
-                radius = 25.dp,
-                color = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            onClick()
-        }) {
+    Box(
+        modifier = Modifier
+            .height(40.dp)
+            .width(40.dp)
+            .wrapContentSize()
+            .rippleClickable(onClick = onClick)
+    ) {
         Icon(
-            painter = painter, contentDescription = ""
+            painter = painter,
+            contentDescription = ""
         )
     }
 }
@@ -168,20 +157,14 @@ fun AppNavigationBar(
             Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                 for (index in tab.indices) {
                     key(index) {
-                        Column(modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f)
-                            .align(Alignment.CenterVertically)
-                            .clickable(
-                                indication = rememberRipple(
-                                    bounded = false,
-                                    radius = 35.dp,
-                                    color = MaterialTheme.colorScheme.primary
-                                ), interactionSource = remember {
-                                    MutableInteractionSource()
-                                }) {
-                                selectTab.value(tab[index])
-                            },
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .weight(1f)
+                                .align(Alignment.CenterVertically)
+                                .rippleClickable(radius = 50.dp) {
+                                    selectTab.value(tab[index])
+                                },
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
