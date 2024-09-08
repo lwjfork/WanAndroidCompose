@@ -22,9 +22,15 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.wan.android.compose.ui.theme.BottomTabIconSize
+import com.wan.android.compose.ui.theme.BottomTabLabelSize
 import com.wan.android.compose.ui.theme.appColors
 
 /**
@@ -33,21 +39,51 @@ import com.wan.android.compose.ui.theme.appColors
  * @author:  liuwenjie09
  * @version: 1.0
  */
+@Composable
+fun SystemStatusBar(statusColor: Color? = null, isLight: Boolean? = null) {
+    findWindow()?.statusBarColor =
+        statusColor?.toArgb() ?: MaterialTheme.colorScheme.surface.toArgb()
+    rememberWindowInsetController()?.let {
+        it.isAppearanceLightStatusBars = isLight ?: MaterialTheme.appColors.isLight
+        it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
+}
 
 @Composable
-fun BottomTab(
+fun SystemNavigationBar() {
+    rememberWindowInsetController()?.let {
+        it.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        it.hide(WindowInsetsCompat.Type.navigationBars())
+    }
+}
+
+@Composable
+fun AppTopBar() {
+
+}
+
+@Composable
+fun AppNavigationBar(
     tab: List<Pair<String, Int>>,
     selectedIndex: Int,
-    onSelectTab: (index: Int) -> Unit
+    onSelectTab: (index: Int) -> Unit,
+    selectedIconColor: Color = MaterialTheme.colorScheme.primary,
+    unSelectedIconColor: Color = MaterialTheme.colorScheme.onBackground,
+    selectLabelColor: Color = MaterialTheme.colorScheme.primary,
+    unSelectedLabelColor: Color = MaterialTheme.colorScheme.onBackground,
+    unSelectedIconSize: Dp = MaterialTheme.BottomTabIconSize,
+    selectedIconSize: Dp = MaterialTheme.BottomTabIconSize,
+    unSelectedTextSize: TextUnit = MaterialTheme.BottomTabLabelSize,
+    selectedTextSize: TextUnit = MaterialTheme.BottomTabLabelSize
 ) {
-    val selected = rememberUpdatedState(newValue = selectedIndex)
     val selectTab = rememberUpdatedState(onSelectTab)
     BottomAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),
         contentPadding = PaddingValues(0.dp),
-        containerColor = Color.White
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             HorizontalDivider(thickness = 0.5.dp)
@@ -68,29 +104,32 @@ fun BottomTab(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                modifier = Modifier.size(24.dp),
+                                modifier = if (index == selectedIndex) {
+                                    Modifier.size(selectedIconSize)
+                                } else {
+                                    Modifier.size(unSelectedIconSize)
+                                } ,
                                 painter = painterResource(id = tab.get(index).second),
                                 contentDescription = "Localized description",
-                                tint = if (index == selected.value) {
-                                    MaterialTheme.appColors.bottomTabSelectedColor
+                                tint = if (index == selectedIndex) {
+                                    selectedIconColor
                                 } else {
-                                    MaterialTheme.appColors.bottomTabDefaultColor
+                                    unSelectedIconColor
                                 },
                             )
                             Text(
                                 text = tab.get(index).first,
-                                color = if (index == selected.value) {
-                                    MaterialTheme.appColors.bottomTabSelectedColor
+                                color = if (index == selectedIndex) {
+                                    selectLabelColor
                                 } else {
-                                    MaterialTheme.appColors.bottomTabDefaultColor
+                                    unSelectedLabelColor
                                 },
-                                fontSize = if (index == selected.value) {
-                                    13.sp
+                                fontSize = if (index == selectedIndex) {
+                                    selectedTextSize
                                 } else {
-                                    12.sp
-                                },
-
-                                )
+                                    unSelectedTextSize
+                                }
+                            )
                         }
                     }
                 }

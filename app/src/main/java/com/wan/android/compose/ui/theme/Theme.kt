@@ -1,7 +1,7 @@
 package com.wan.android.compose.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -11,19 +11,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-sealed interface ThemeScheme
-object GreenTheme:ThemeScheme
-object RedTheme:ThemeScheme
 
 
 @Composable
-fun AppTheme(
-    pallet: ThemeScheme = AppTheme.pallet, content: @Composable () -> Unit
-) {
-    val (colorTheme, appColors) = pallet.colors
+fun AppTheme(content: @Composable () -> Unit) {
+    val seedColor: Color = AppTheme.seedColor
+    val (colorTheme, appColors) = seedColor.colors
     ProvideAppColors(colors = appColors) {
         MaterialTheme(
-            colorScheme = lightColorScheme(),
+            colorScheme = appColors.colorScheme,
             typography = Typography,
             shapes = Shapes,
             content = content
@@ -31,46 +27,36 @@ fun AppTheme(
     }
 }
 
-val MaterialTheme.appColors:AppColors
+val MaterialTheme.appColors: AppThemeColor
     @Composable
     get() = AppTheme.colors
 
-object AppTheme {
-    val colors: AppColors
+private object AppTheme {
+    val colors: AppThemeColor
         @Composable get() = LocalAppColors.current
 
     /** 使用一个state维护当前主题配置,这里的写法取决于具体业务，
     如果你使用了深色模式默认配置，则无需这个变量，即app只支持深色与亮色，
     那么只需要每次读系统配置即可。但是compose本身可以做到快速切换主题，
     那么维护一个变量是肯定没法避免的 */
-    var pallet:ThemeScheme by mutableStateOf(GreenTheme)
+    var seedColor: Color by mutableStateOf(Color(0xFF8F13A8))
 
-    fun switch(theme:ThemeScheme){
-        if(theme == pallet){
+    fun switch(seedColor: Color) {
+        if (this.seedColor == seedColor) {
             return
         }
-        pallet = theme
+        this.seedColor = seedColor
     }
 }
 
-private val AppReaColorPalette = AppColors(
-    isDark = false,
-    statusBarColor = Color.Red,
-    bottomTabSelectedColor = Color.Red,
-    bottomTabDefaultColor = Color.Black
+fun switchAppTheme(seedColor: Color) {
+    AppTheme.switch(seedColor)
+}
 
-)
-
-private val AppGreenColorPalette = AppColors(
-    isDark = true,
-    statusBarColor = Color.Green,
-    bottomTabSelectedColor = Color.Green,
-    bottomTabDefaultColor = Color.Black
-)
 
 @Composable
-fun ProvideAppColors(
-    colors: AppColors, content: @Composable () -> Unit
+private fun ProvideAppColors(
+    colors: AppThemeColor, content: @Composable () -> Unit
 ) {
     val colorPalette = remember {
         colors.copy()
@@ -80,14 +66,18 @@ fun ProvideAppColors(
 }
 
 private val LocalAppColors = staticCompositionLocalOf {
-    AppGreenColorPalette
+    ThemeColors.entries.iterator().next().value.lightTheme
 }
 
 
 /* 针对当前主题配置颜色板扩展属性 */
-private val ThemeScheme.colors: Pair<ThemeScheme, AppColors>
-    get() = when (this) {
-        GreenTheme -> GreenTheme to AppGreenColorPalette
-        RedTheme -> RedTheme to AppReaColorPalette
-    }
+private val Color.colors: Pair<Color, AppThemeColor>
+    @Composable
+    get() = Pair(this, if(isSystemInDarkTheme()){ThemeColors.get(this)!!.darkTheme}else{
+        ThemeColors.get(this)!!.lightTheme
+    })
 
+
+val ThemeColors: LinkedHashMap<Color, ThemeColor> = LinkedHashMap(
+
+)

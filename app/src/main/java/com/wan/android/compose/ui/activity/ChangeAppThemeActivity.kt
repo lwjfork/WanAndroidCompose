@@ -15,9 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.wan.android.compose.component.ImmersiveScreenPageContent
-import com.wan.android.compose.ui.theme.AppTheme
-import com.wan.android.compose.ui.theme.GreenTheme
-import com.wan.android.compose.ui.theme.RedTheme
+import com.wan.android.compose.ui.theme.ThemeColors
+import com.wan.android.compose.ui.theme.switchAppTheme
 
 class ChangeAppThemeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,26 +28,18 @@ class ChangeAppThemeActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    Text(
-                        text = "切换绿色", modifier = Modifier
-                            .background(Color.Green)
-                            .height(100.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                AppTheme.switch(GreenTheme)
-                            },
-                        color = Color.White
-                    )
-                    Text(
-                        text = "切换红色", modifier = Modifier
-                            .background(Color.Red)
-                            .height(100.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                AppTheme.switch(RedTheme)
-                            },
-                        color = Color.White
-                    )
+                    for (themeColor in ThemeColors) {
+                        Text(
+                            text = "选择该颜色", modifier = Modifier
+                                .background(themeColor.key)
+                                .height(100.dp)
+                                .fillMaxWidth()
+                                .clickable {
+                                    switchAppTheme(themeColor.key)
+                                },
+                            color = Color.White
+                        )
+                    }
                 }
             }
 

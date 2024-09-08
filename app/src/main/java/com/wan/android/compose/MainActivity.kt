@@ -1,5 +1,6 @@
 package com.wan.android.compose
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,19 +20,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.wan.android.compose.component.BottomTab
+import androidx.compose.ui.unit.sp
+import com.wan.android.compose.component.AppNavigationBar
+import com.wan.android.compose.component.AppTopBar
 import com.wan.android.compose.component.ImmersiveScreenPageContent
 import com.wan.android.compose.ui.activity.ChangeAppThemeActivity
+import com.wan.android.compose.ui.theme.readThemeFromAssets
 
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        readThemeFromAssets(this)
         setContent {
-            ImmersiveScreenPageContent(bottomBar = { BottomBar()}){
-                Column(modifier = Modifier
-                    .fillMaxSize()) {
+            ImmersiveScreenPageContent(
+                topBar = { TopBar() },
+                bottomBar = { BottomBar() }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
                     Text(
                         text = "切换主题", modifier = Modifier
                             .background(Color.Green)
@@ -39,26 +49,31 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .clickable {
                                 val intent = Intent()
-                                intent.setClass(applicationContext,ChangeAppThemeActivity::class.java)
+                                intent.setClass(
+                                    applicationContext,
+                                    ChangeAppThemeActivity::class.java
+                                )
                                 startActivity(intent)
                             },
                         color = Color.White
                     )
                 }
             }
-
         }
     }
 
+    @Composable
+    @Preview(showBackground = true)
+    fun TopBar() {
+        AppTopBar(
 
-
-
+        )
+    }
 
     @Composable
-    @Preview
     fun BottomBar() {
         val index = remember { mutableIntStateOf(0) }
-        BottomTab(
+        AppNavigationBar(
             mutableListOf(
                 Pair("首页", R.drawable.ic_home_24dp),
                 Pair("广场", R.drawable.ic_square_24dp),
@@ -67,8 +82,10 @@ class MainActivity : ComponentActivity() {
                 Pair("项目", R.drawable.ic_project_24dp),
             ),
             selectedIndex = index.intValue,
+            selectedTextSize = 14.sp,
+            unSelectedTextSize = 12.sp,
             onSelectTab = {
-                index.value = it
+                index.intValue = it
             }
         )
     }
