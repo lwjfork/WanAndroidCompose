@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import com.wan.android.compose.theme.readThemeFromAssets
-import com.wan.android.compose.ui.activity.main.MainActivity
+import com.wan.android.compose.ui.main.MainActivity
 import kotlinx.coroutines.launch
 
 /**

@@ -132,9 +132,9 @@ fun AppTopBarIconContainer(painter: Painter, onClick: () -> Unit = {}) {
 
 @Composable
 fun AppNavigationBar(
-    tab: List<Triple<String, Int, String>>,
-    selectedIndex: Triple<String, Int, String>,
-    onSelectTab: (index: Triple<String, Int, String>) -> Unit,
+    tab: List<Pair<String, Int>>,
+    selectedIndex: Int,
+    onSelectTab: (index: Int) -> Unit,
     selectedIconColor: Color = MaterialTheme.colorScheme.primary,
     unSelectedIconColor: Color = MaterialTheme.colorScheme.onBackground,
     selectLabelColor: Color = MaterialTheme.colorScheme.primary,
@@ -163,20 +163,20 @@ fun AppNavigationBar(
                                 .weight(1f)
                                 .align(Alignment.CenterVertically)
                                 .rippleClickable(radius = 50.dp) {
-                                    selectTab.value(tab[index])
+                                    selectTab.value(index)
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                modifier = if (tab[index].third == selectedIndex.third) {
+                                modifier = if (index == selectedIndex) {
                                     Modifier.size(selectedIconSize)
                                 } else {
                                     Modifier.size(unSelectedIconSize)
                                 },
                                 painter = painterResource(id = tab.get(index).second),
                                 contentDescription = "Localized description",
-                                tint = if (tab[index].third == selectedIndex.third) {
+                                tint = if (index == selectedIndex) {
                                     selectedIconColor
                                 } else {
                                     unSelectedIconColor
@@ -184,12 +184,12 @@ fun AppNavigationBar(
                             )
                             Text(
                                 text = tab.get(index).first,
-                                color = if (tab[index].third == selectedIndex.third) {
+                                color = if (index == selectedIndex) {
                                     selectLabelColor
                                 } else {
                                     unSelectedLabelColor
                                 },
-                                fontSize = if (tab[index].third == selectedIndex.third) {
+                                fontSize = if (index == selectedIndex) {
                                     selectedTextSize
                                 } else {
                                     unSelectedTextSize

@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.change_app_theme.ChangeAppThemeActivity" />
-        <activity android:name=".ui.activity.main.MainActivity" />
+        <activity android:name=".ui.main.MainActivity"  android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>

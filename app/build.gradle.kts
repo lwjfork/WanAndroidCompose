@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.runtime.livedata)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.kotlin.poet)
@@ -71,4 +72,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.kt.compose)
+    implementation(libs.androidx.lifecycle.viewModelCompose)
 }
