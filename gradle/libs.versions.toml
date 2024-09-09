@@ -16,6 +16,7 @@ androidx-viewpager2 = "1.0.0"
 navigation-compose = "2.8.0"
 runtime-livedata = "1.7.0"
 coil = "2.5.0"
+navigationFragmentKtx = "2.8.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle-compose" }
@@ -41,6 +42,7 @@ androidx-appcompat = {group = "androidx.appcompat", name = "appcompat", version.
 androidx-viewpager2 = {group = "androidx.viewpager2", name = "viewpager2", version.ref = "androidx-viewpager2"}
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

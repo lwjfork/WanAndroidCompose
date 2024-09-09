@@ -6,7 +6,6 @@ import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
@@ -28,20 +27,33 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.wan.android.compose.R
 import com.wan.android.compose.component.AppCenterAlignedTopAppBar
 import com.wan.android.compose.component.AppNavigationBar
 import com.wan.android.compose.component.AppTopBarIconContainer
 import com.wan.android.compose.component.ImmersiveScreenPageContent
+import com.wan.android.compose.ui.main.tab.MainTabScreen
+import com.wan.android.compose.ui.main.tab.OfficialAccountTabScreen
+import com.wan.android.compose.ui.main.tab.ProjectTabScreen
+import com.wan.android.compose.ui.main.tab.SquareTabScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    val tabs: List<Pair<String, Int>> = mutableListOf(
+        Pair("首页", R.drawable.ic_home_24dp),
+        Pair("广场", R.drawable.ic_square_24dp),
+        Pair("公众号", R.drawable.ic_wechat_24dp),
+        Pair("体系", R.drawable.ic_apps_24dp),
+        Pair("项目", R.drawable.ic_project_24dp),
+    )
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -56,57 +68,54 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val selectIndex = remember { mutableIntStateOf(1) }
-            val tabs: List<Pair<String, Int>> = mutableListOf(
-                Pair("首页", R.drawable.ic_home_24dp),
-                Pair("广场", R.drawable.ic_square_24dp),
-                Pair("公众号", R.drawable.ic_wechat_24dp),
-                Pair("体系", R.drawable.ic_apps_24dp),
-                Pair("项目", R.drawable.ic_project_24dp),
-            )
-            val fragments: List<Fragment> = mutableListOf(
-                MainTabFragment(),
-                SquareTabFragment(),
-                OfficialAccountTabFragment(),
-                SystemTabFragment(),
-                ProjectTabFragment(),
-            )
+            val selectIndex = remember { mutableIntStateOf(0) }
+            val navController = rememberNavController()
             ModalNavigationDrawer(drawerState = drawerState,
                 gesturesEnabled = false,
                 drawerContent = {
-                    NavigationDrawerContent()
+                    NavigationDrawerContent(drawerState)
                 }) {
                 ImmersiveScreenPageContent(topBar = { TopBar(drawerState) }, bottomBar = {
                     BottomBar(tabs, selectIndex.value) {
                         selectIndex.value = it
+                        navController.navigate(tabs.get(it).first){
+                            popUpTo(tabs[0].first) {
+                                saveState = true
+                            }
+                            // 避免多次点击Item时产生多个实列
+                            launchSingleTop = true
+                            // 当再次点击之前的Item时，恢复状态
+                            restoreState = true
+                        }
                     }
                 }) {
-                    PageContent(fragments = fragments, selectIndex.value)
+                    PageNavContent(navController)
                 }
             }
         }
     }
 
-    class ViewPageFragmentAdapter(
-        private val fragments: List<Fragment>, fragmentActivity: FragmentActivity
-    ) : FragmentStateAdapter(fragmentActivity) {
-        override fun getItemCount(): Int = this.fragments.size
-        override fun createFragment(position: Int) = this.fragments.get(position)
-    }
-
 
     @Composable
-    fun PageContent(fragments: List<Fragment>, currentIndex: Int) {
-        val activity = this
-        AndroidView(factory = {
-            ViewPager2(it).apply {
-                this.adapter = ViewPageFragmentAdapter(fragments, activity)
-                this.setCurrentItem(currentIndex,false)
-                this.isUserInputEnabled = false
+    fun PageNavContent(navHostController: NavHostController) {
+        NavHost(navController = navHostController, startDestination = tabs[0].first) {
+            composable(tabs[0].first) {
+                MainTabScreen()
             }
-        }, modifier = Modifier.fillMaxSize(), update = {
-            it.setCurrentItem(currentIndex,false)
-        })
+            composable(tabs[1].first) {
+                SquareTabScreen()
+            }
+            composable(tabs[2].first) {
+                OfficialAccountTabScreen()
+            }
+            composable(tabs[3].first) {
+                SquareTabScreen()
+            }
+            composable(tabs[4].first) {
+                ProjectTabScreen()
+            }
+
+        }
     }
 
 
@@ -153,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     fun NavigationDrawerContent(
-        drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
+        drawerState: DrawerState ,
     ) {
         val scope = rememberCoroutineScope()
         ModalDrawerSheet(
