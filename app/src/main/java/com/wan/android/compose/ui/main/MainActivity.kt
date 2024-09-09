@@ -1,11 +1,16 @@
 package com.wan.android.compose.ui.main
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
@@ -19,41 +24,33 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.wan.android.compose.R
 import com.wan.android.compose.component.AppCenterAlignedTopAppBar
 import com.wan.android.compose.component.AppNavigationBar
 import com.wan.android.compose.component.AppTopBarIconContainer
 import com.wan.android.compose.component.ImmersiveScreenPageContent
-import com.wan.android.compose.ui.main.tab.MainTabScreen
-import com.wan.android.compose.ui.main.tab.OfficialAccountTabScreen
-import com.wan.android.compose.ui.main.tab.ProjectTabScreen
-import com.wan.android.compose.ui.main.tab.SquareTabScreen
+import com.wan.android.compose.ui.activity.change_app_theme.ChangeAppThemeActivity
+import com.wan.android.compose.ui.main.screen.MainTabScreen
+import com.wan.android.compose.ui.main.screen.OfficialAccountTabScreen
+import com.wan.android.compose.ui.main.screen.ProjectTabScreen
+import com.wan.android.compose.ui.main.screen.SquareTabScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    val tabs: List<Pair<String, Int>> = mutableListOf(
-        Pair("首页", R.drawable.ic_home_24dp),
-        Pair("广场", R.drawable.ic_square_24dp),
-        Pair("公众号", R.drawable.ic_wechat_24dp),
-        Pair("体系", R.drawable.ic_apps_24dp),
-        Pair("项目", R.drawable.ic_project_24dp),
-    )
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -66,9 +63,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val tabs: List<Pair<String, Int>> = mutableListOf(
+            Pair("首页", R.drawable.ic_home_24dp),
+            Pair("广场", R.drawable.ic_square_24dp),
+            Pair("公众号", R.drawable.ic_wechat_24dp),
+            Pair("体系", R.drawable.ic_apps_24dp),
+            Pair("项目", R.drawable.ic_project_24dp),
+        )
         setContent {
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val selectIndex = remember { mutableIntStateOf(0) }
+            val selectIndex = rememberSaveable { mutableIntStateOf(0) }
             val navController = rememberNavController()
             ModalNavigationDrawer(drawerState = drawerState,
                 gesturesEnabled = false,
@@ -78,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                 ImmersiveScreenPageContent(topBar = { TopBar(drawerState) }, bottomBar = {
                     BottomBar(tabs, selectIndex.value) {
                         selectIndex.value = it
-                        navController.navigate(tabs.get(it).first){
+                        navController.navigate(tabs.get(it).first) {
                             popUpTo(tabs[0].first) {
                                 saveState = true
                             }
@@ -89,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }) {
-                    PageNavContent(navController)
+                    PageNavContent(navController, tabs)
                 }
             }
         }
@@ -97,8 +101,15 @@ class MainActivity : AppCompatActivity() {
 
 
     @Composable
-    fun PageNavContent(navHostController: NavHostController) {
-        NavHost(navController = navHostController, startDestination = tabs[0].first) {
+    fun PageNavContent(navHostController: NavHostController, tabs: List<Pair<String, Int>>) {
+        NavHost(
+            navController = navHostController,
+            startDestination = tabs[0].first,
+            enterTransition = { fadeIn(spring(stiffness = 0F)) },
+            exitTransition = { fadeOut(spring(stiffness = 0F)) },
+            popExitTransition = { fadeOut(spring(stiffness = 0F)) },
+            popEnterTransition = { fadeIn(spring(stiffness = 0F)) },
+        ) {
             composable(tabs[0].first) {
                 MainTabScreen()
             }
@@ -162,15 +173,16 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     fun NavigationDrawerContent(
-        drawerState: DrawerState ,
+        drawerState: DrawerState,
     ) {
         val scope = rememberCoroutineScope()
+        val activity = LocalContext.current as Activity
         ModalDrawerSheet(
             modifier = Modifier.width(300.coerceAtMost((LocalConfiguration.current.screenWidthDp * 0.6).toInt()).dp)
         ) {
             Text("Drawer title", modifier = Modifier.padding(16.dp))
             Divider()
-            NavigationDrawerItem(label = { Text(text = "Drawer Item") },
+            NavigationDrawerItem(label = { Text(text = "Drawer  关闭") },
                 selected = false,
                 onClick = {
                     scope.launch {
@@ -178,6 +190,13 @@ class MainActivity : AppCompatActivity() {
                             if (isClosed) open() else close()
                         }
                     }
+                })
+            NavigationDrawerItem(label = { Text(text = "切换  主题") },
+                selected = false,
+                onClick = {
+                    val intent = Intent()
+                    intent.setClass(activity.application, ChangeAppThemeActivity::class.java)
+                    activity.startActivity(intent)
                 })
         }
     }

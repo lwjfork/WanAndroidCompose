@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.main.tab
+package com.wan.android.compose.ui.main.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

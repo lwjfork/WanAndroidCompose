@@ -17,6 +17,13 @@ interface MainService {
     // 获取首页文章
     @GET("/article/list/{pageIndex}/json")
     suspend fun getArticleList(@Path("pageIndex") pageIndex: Int): ResponseModel<ArticleListResp>
+
     @GET("/banner/json")
-    suspend fun getMainBanner():ResponseModel<List<MainBannerItem>>
+    suspend fun getMainBanner(): ResponseModel<List<MainBannerItem>>
+
+    companion object {
+        fun getInstance(): MainService {
+            return Retrofit.createService()
+        }
+    }
 }

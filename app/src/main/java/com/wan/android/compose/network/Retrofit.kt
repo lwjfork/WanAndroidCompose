@@ -11,8 +11,8 @@ object Retrofit {
         .build()
 
 
-    fun <T> createService(clazz: Class<T>): T {
-        return retrofit.create(clazz)
+    inline fun <reified T> createService(): T {
+        return retrofit.create(T::class.java)
     }
 
 }
