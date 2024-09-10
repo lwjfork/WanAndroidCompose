@@ -21,7 +21,7 @@ private fun parseColorPaletteFromJson(jsonObj: JSONObject): ColorPalette {
             val typeColorJSONObject = palettes.optJSONObject(typeColorName)
             typeColorJSONObject?.keys()?.forEach {
                 palettesColors["${toCamelCase(typeColorName)}${it}"] =
-                    toColor(typeColorJSONObject.optString(it))
+                    typeColorJSONObject.optString(it).toColor()
             }
         }
     }
@@ -122,62 +122,9 @@ private fun parseColorPaletteFromJson(jsonObj: JSONObject): ColorPalette {
 fun parseThemeSpecFromJson(
     jsonObj: JSONObject, isLight: Boolean, seedColor: Color, colorPalette: ColorPalette
 ): AppThemeColor {
-    val materialColorName: Array<String> = arrayOf(
-        "primary",
-        "onPrimary",
-        "primaryContainer",
-        "onPrimaryContainer",
-        "inversePrimary",
-        "secondary",
-        "onSecondary",
-        "secondaryContainer",
-        "onSecondaryContainer",
-        "tertiary",
-        "onTertiary",
-        "tertiaryContainer",
-        "onTertiaryContainer",
-        "background",
-        "onBackground",
-        "surface",
-        "onSurface",
-        "surfaceVariant",
-        "onSurfaceVariant",
-        "surfaceTint",
-        "inverseSurface",
-        "inverseOnSurface",
-        "error",
-        "onError",
-        "errorContainer",
-        "onErrorContainer",
-        "outline",
-        "outlineVariant",
-        "scrim",
-        "surfaceBright",
-        "surfaceDim",
-        "surfaceContainer",
-        "surfaceContainerHigh",
-        "surfaceContainerHighest",
-        "surfaceContainerLow",
-        "surfaceContainerLowest"
-    )
-    val customColorNames: Array<String> = arrayOf(
-        "shadow",
-        "primaryFixed",
-        "onPrimaryFixed",
-        "primaryFixedDim",
-        "onPrimaryFixedVariant",
-        "secondaryFixed",
-        "onSecondaryFixed",
-        "secondaryFixedDim",
-        "onSecondaryFixedVariant",
-        "tertiaryFixed",
-        "onTertiaryFixed",
-        "tertiaryFixedDim",
-        "onTertiaryFixedVariant"
-    )
     val colors: MutableMap<String, Color> = mutableMapOf()
     jsonObj.keys().forEach {
-        colors[it] = toColor(jsonObj.optString(it))
+        colors[it] = jsonObj.optString(it).toColor()
     }
 
     return AppThemeColor(
@@ -241,7 +188,7 @@ fun parseThemeFromJson(context: Context, assetFileName: String): ThemeColor? {
         val themeJson = context.assets.open(assetFileName).bufferedReader().readText()
         val jsonObj = JSONObject(themeJson)
         val colorPalette = parseColorPaletteFromJson(jsonObj)
-        val seedColor = toColor(jsonObj.optString("seed"))
+        val seedColor = jsonObj.optString("seed").toColor()
         var lightThemeColor: AppThemeColor? = null
         var darkThemeColor: AppThemeColor? = null
         val schemesJsonObj = jsonObj.optJSONObject("schemes")
@@ -292,8 +239,8 @@ fun readThemeFromAssets(context: Context) {
 
 }
 
-fun toColor(str: String): Color {
-    return Color(android.graphics.Color.parseColor(str))
+fun String.toColor(): Color {
+    return Color(android.graphics.Color.parseColor(this))
 }
 
 fun toCamelCase(str: String): String {
