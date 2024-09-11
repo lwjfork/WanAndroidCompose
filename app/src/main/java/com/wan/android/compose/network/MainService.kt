@@ -5,6 +5,7 @@ import com.wan.android.compose.model.MainBannerItem
 import com.wan.android.compose.model.ResponseModel
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * @Description:
@@ -16,7 +17,7 @@ interface MainService {
 
     // 获取首页文章
     @GET("/article/list/{pageIndex}/json")
-    suspend fun getArticleList(@Path("pageIndex") pageIndex: Int): ResponseModel<ArticleListResp>
+    suspend fun getArticleList(@Path("pageIndex") pageIndex: Int,@Query("page_size") page_size:Int = 40): ResponseModel<ArticleListResp>
 
     @GET("/banner/json")
     suspend fun getMainBanner(): ResponseModel<List<MainBannerItem>>

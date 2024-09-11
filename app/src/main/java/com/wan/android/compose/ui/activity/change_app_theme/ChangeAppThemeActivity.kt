@@ -11,18 +11,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.wan.android.compose.component.ImmersiveScreenPageContent
+import com.wan.android.compose.stores.persistent.APPGlobalConfigStore
 import com.wan.android.compose.theme.ThemeColors
 import com.wan.android.compose.theme.switchAppTheme
+import kotlinx.coroutines.launch
 
 class ChangeAppThemeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val coroutineScope = rememberCoroutineScope()
             ImmersiveScreenPageContent {
                 Column(
                     modifier = Modifier
@@ -35,7 +39,17 @@ class ChangeAppThemeActivity : ComponentActivity() {
                                 .height(100.dp)
                                 .fillMaxWidth()
                                 .clickable {
-                                    switchAppTheme(themeColor.key)
+                                    coroutineScope.launch {
+                                        APPGlobalConfigStore.updateData {
+                                            it
+                                                .toBuilder()
+                                                .setThemeColor(themeColor.key.toHexString())
+                                                .build()
+                                        }
+                                        switchAppTheme(themeColor.key)
+                                    }
+
+
                                 },
                             color = Color.White
                         )
@@ -44,5 +58,15 @@ class ChangeAppThemeActivity : ComponentActivity() {
             }
 
         }
+    }
+
+    fun Color.toHexString(): String {
+        return String.format(
+            "#%02X%02X%02X%02X",
+            (this.alpha * 255).toInt(),
+            (this.red * 255).toInt(),
+            (this.green * 255).toInt(),
+            (this.blue * 255).toInt()
+        )
     }
 }

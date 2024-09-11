@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -23,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberUpdatedState
@@ -50,7 +52,7 @@ import com.wan.android.compose.theme.appColors
 @Composable
 fun SystemStatusBar(statusColor: Color? = null, isLight: Boolean? = null) {
     findWindow()?.statusBarColor =
-        statusColor?.toArgb() ?: MaterialTheme.colorScheme.surface.toArgb()
+        statusColor?.toArgb() ?: MaterialTheme.colorScheme.surfaceContainer.toArgb()
     rememberWindowInsetController()?.let {
         it.isAppearanceLightStatusBars = isLight ?: MaterialTheme.appColors.isLight
         it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -72,7 +74,9 @@ fun AppCenterAlignedTopAppBar(
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors()
+        .copy(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     val titleComposable = @Composable {
         Box(
@@ -109,7 +113,7 @@ fun AppCenterAlignedTopAppBar(
         navigationIcon = navigationIconComposable,
         actions = actionsComposable,
         colors = colors,
-        modifier = modifier.height(64.dp)
+        scrollBehavior = scrollBehavior
     )
 }
 
@@ -123,18 +127,19 @@ fun AppTopBarIconContainer(painter: Painter, onClick: () -> Unit = {}) {
             .rippleClickable(onClick = onClick)
     ) {
         Icon(
-            painter = painter,
-            contentDescription = ""
+            painter = painter, contentDescription = ""
         )
     }
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigationBar(
     tab: List<Pair<String, Int>>,
     selectedIndex: Int,
     onSelectTab: (index: Int) -> Unit,
+    scrollBehavior: BottomAppBarScrollBehavior? = null,
     selectedIconColor: Color = MaterialTheme.colorScheme.primary,
     unSelectedIconColor: Color = MaterialTheme.colorScheme.onBackground,
     selectLabelColor: Color = MaterialTheme.colorScheme.primary,
@@ -147,12 +152,12 @@ fun AppNavigationBar(
     val selectTab = rememberUpdatedState(onSelectTab)
     BottomAppBar(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
+            .fillMaxWidth(),
         contentPadding = PaddingValues(0.dp),
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        scrollBehavior = scrollBehavior
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().height(56.dp)) {
             HorizontalDivider(thickness = 0.5.dp)
             Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                 for (index in tab.indices) {
@@ -183,13 +188,11 @@ fun AppNavigationBar(
                                 },
                             )
                             Text(
-                                text = tab.get(index).first,
-                                color = if (index == selectedIndex) {
+                                text = tab.get(index).first, color = if (index == selectedIndex) {
                                     selectLabelColor
                                 } else {
                                     unSelectedLabelColor
-                                },
-                                fontSize = if (index == selectedIndex) {
+                                }, fontSize = if (index == selectedIndex) {
                                     selectedTextSize
                                 } else {
                                     unSelectedTextSize

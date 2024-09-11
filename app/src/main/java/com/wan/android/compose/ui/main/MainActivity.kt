@@ -1,56 +1,44 @@
 package com.wan.android.compose.ui.main
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.wan.android.compose.R
-import com.wan.android.compose.component.AppCenterAlignedTopAppBar
-import com.wan.android.compose.component.AppNavigationBar
-import com.wan.android.compose.component.AppTopBarIconContainer
-import com.wan.android.compose.component.ImmersiveScreenPageContent
-import com.wan.android.compose.ui.activity.change_app_theme.ChangeAppThemeActivity
-import com.wan.android.compose.ui.main.screen.MainTabScreen
-import com.wan.android.compose.ui.main.screen.OfficialAccountTabScreen
-import com.wan.android.compose.ui.main.screen.ProjectTabScreen
-import com.wan.android.compose.ui.main.screen.SquareTabScreen
-import kotlinx.coroutines.launch
+import com.wan.android.compose.ui.main.screen.MainScreen
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
-
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -59,145 +47,137 @@ class MainActivity : AppCompatActivity() {
         return super.onKeyUp(keyCode, event)
     }
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val tabs: List<Pair<String, Int>> = mutableListOf(
-            Pair("首页", R.drawable.ic_home_24dp),
-            Pair("广场", R.drawable.ic_square_24dp),
-            Pair("公众号", R.drawable.ic_wechat_24dp),
-            Pair("体系", R.drawable.ic_apps_24dp),
-            Pair("项目", R.drawable.ic_project_24dp),
-        )
         setContent {
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val selectIndex = rememberSaveable { mutableIntStateOf(0) }
-            val navController = rememberNavController()
-            ModalNavigationDrawer(drawerState = drawerState,
-                gesturesEnabled = false,
-                drawerContent = {
-                    NavigationDrawerContent(drawerState)
-                }) {
-                ImmersiveScreenPageContent(topBar = { TopBar(drawerState) }, bottomBar = {
-                    BottomBar(tabs, selectIndex.value) {
-                        selectIndex.value = it
-                        navController.navigate(tabs.get(it).first) {
-                            popUpTo(tabs[0].first) {
-                                saveState = true
-                            }
-                            // 避免多次点击Item时产生多个实列
-                            launchSingleTop = true
-                            // 当再次点击之前的Item时，恢复状态
-                            restoreState = true
-                        }
-                    }
-                }) {
-                    PageNavContent(navController, tabs)
-                }
+            MainScreen()
+//            NestedScrollDispatcherSample()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NestedScrollConnectionSample() {
+    // here we use LazyColumn that has build-in nested scroll, but we want to act like a
+    // parent for this LazyColumn and participate in its nested scroll.
+    // Let's make a collapsing toolbar for LazyColumn
+    val toolbarHeight = 48.dp
+    val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
+    // our offset to collapse toolbar
+    val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
+    // now, let's create connection to the nested scroll system and listen to the scroll
+    // happening inside child LazyColumn
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                // try to consume before LazyColumn to collapse toolbar if needed, hence pre-scroll
+                val delta = available.y
+                val newOffset = toolbarOffsetHeightPx.value + delta
+                toolbarOffsetHeightPx.value = newOffset.coerceIn(-toolbarHeightPx, 0f)
+                // here's the catch: let's pretend we consumed 0 in any case, since we want
+                // LazyColumn to scroll anyway for good UX
+                // We're basically watching scroll without taking it
+                return Offset.Zero
             }
         }
     }
-
-
-    @Composable
-    fun PageNavContent(navHostController: NavHostController, tabs: List<Pair<String, Int>>) {
-        NavHost(
-            navController = navHostController,
-            startDestination = tabs[0].first,
-            enterTransition = { fadeIn(spring(stiffness = 0F)) },
-            exitTransition = { fadeOut(spring(stiffness = 0F)) },
-            popExitTransition = { fadeOut(spring(stiffness = 0F)) },
-            popEnterTransition = { fadeIn(spring(stiffness = 0F)) },
-        ) {
-            composable(tabs[0].first) {
-                MainTabScreen()
-            }
-            composable(tabs[1].first) {
-                SquareTabScreen()
-            }
-            composable(tabs[2].first) {
-                OfficialAccountTabScreen()
-            }
-            composable(tabs[3].first) {
-                SquareTabScreen()
-            }
-            composable(tabs[4].first) {
-                ProjectTabScreen()
-            }
-
-        }
-    }
-
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun TopBar(drawerState: DrawerState? = null) {
-        val scope = rememberCoroutineScope()
-        AppCenterAlignedTopAppBar(title = {
-            Text(
-                text = "标题", fontSize = 18.sp
-            )
-        }, navigationIcon = {
-            AppTopBarIconContainer(painter = painterResource(id = R.drawable.ic_project_24dp),
-                onClick = {
-                    scope.launch {
-                        drawerState?.apply {
-                            if (isClosed) open() else close()
-                        }
-                    }
-                })
-        }, actions = {
-            AppTopBarIconContainer(
-                painter = painterResource(id = R.drawable.ic_project_24dp),
-            )
-            AppTopBarIconContainer(
-                painter = painterResource(id = R.drawable.ic_project_24dp),
-            )
-        })
-    }
-
-    @Composable
-    fun BottomBar(
-        tabs: List<Pair<String, Int>>, selectIndex: Int, onSelectTab: (index: Int) -> Unit
+    Box(
+        Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
     ) {
-        val selectTab = rememberUpdatedState(newValue = onSelectTab)
-        AppNavigationBar(
-            tab = tabs,
-            selectedIndex = selectIndex,
-            selectedTextSize = 14.sp,
-            unSelectedTextSize = 12.sp,
-            onSelectTab = selectTab.value
+        LazyColumn(contentPadding = PaddingValues(top = toolbarHeight)) {
+            items(100) { index ->
+                Text("I'm item $index", modifier = Modifier.fillMaxWidth().padding(16.dp))
+            }
+        }
+        TopAppBar(
+            modifier = Modifier
+                .height(toolbarHeight)
+                .offset { IntOffset(x = 0, y = toolbarOffsetHeightPx.value.roundToInt()) },
+            title = { Text("toolbar offset is ${toolbarOffsetHeightPx.value}") }
         )
     }
+}
 
-    @Composable
-    fun NavigationDrawerContent(
-        drawerState: DrawerState,
-    ) {
-        val scope = rememberCoroutineScope()
-        val activity = LocalContext.current as Activity
-        ModalDrawerSheet(
-            modifier = Modifier.width(300.coerceAtMost((LocalConfiguration.current.screenWidthDp * 0.6).toInt()).dp)
-        ) {
-            Text("Drawer title", modifier = Modifier.padding(16.dp))
-            Divider()
-            NavigationDrawerItem(label = { Text(text = "Drawer  关闭") },
-                selected = false,
-                onClick = {
-                    scope.launch {
-                        drawerState.apply {
-                            if (isClosed) open() else close()
-                        }
-                    }
-                })
-            NavigationDrawerItem(label = { Text(text = "切换  主题") },
-                selected = false,
-                onClick = {
-                    val intent = Intent()
-                    intent.setClass(activity.application, ChangeAppThemeActivity::class.java)
-                    activity.startActivity(intent)
-                })
+@Composable
+fun NestedScrollDispatcherSample() {
+    // Let's take Modifier.draggable (which doesn't have nested scroll build in, unlike Modifier
+    // .scrollable) and add nested scroll support our component that contains draggable
+
+    // this will be a generic components that will work inside other nested scroll components.
+    // put it inside LazyColumn or / Modifier.verticalScroll to see how they will interact
+
+    // first, state and it's bounds
+    val basicState = remember { mutableStateOf(0f) }
+    val minBound = -100f
+    val maxBound = 100f
+    // lambda to update state and return amount consumed
+    val onNewDelta: (Float) -> Float = { delta ->
+        val oldState = basicState.value
+        val newState = (basicState.value + delta).coerceIn(minBound, maxBound)
+        basicState.value = newState
+        newState - oldState
+    }
+    // create a dispatcher to dispatch nested scroll events (participate like a nested scroll child)
+    val nestedScrollDispatcher = remember { NestedScrollDispatcher() }
+
+    // create nested scroll connection to react to nested scroll events (participate like a parent)
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                // we have no fling, so we're interested in the regular post scroll cycle
+                // let's try to consume what's left if we need and return the amount consumed
+                val vertical = available.y
+                val weConsumed = onNewDelta(vertical)
+                return Offset(x = 0f, y = weConsumed)
+            }
         }
+    }
+    Box(
+        Modifier
+            .size(100.dp)
+            .background(Color.LightGray)
+            // attach ourselves to nested scroll system
+            .nestedScroll(connection = nestedScrollConnection, dispatcher = nestedScrollDispatcher)
+            .draggable(
+                orientation = Orientation.Vertical,
+                state = rememberDraggableState { delta ->
+                    // here's regular drag. Let's be good citizens and ask parents first if they
+                    // want to pre consume (it's a nested scroll contract)
+                    val parentsConsumed = nestedScrollDispatcher.dispatchPreScroll(
+                        available = Offset(x = 0f, y = delta),
+                        source = NestedScrollSource.UserInput
+                    )
+                    // adjust what's available to us since might have consumed smth
+                    val adjustedAvailable = delta - parentsConsumed.y
+                    // we consume
+                    val weConsumed = onNewDelta(adjustedAvailable)
+                    // dispatch as a post scroll what's left after pre-scroll and our consumption
+                    val totalConsumed = Offset(x = 0f, y = weConsumed) + parentsConsumed
+                    val left = adjustedAvailable - weConsumed
+                    nestedScrollDispatcher.dispatchPostScroll(
+                        consumed = totalConsumed,
+                        available = Offset(x = 0f, y = left),
+                        source = NestedScrollSource.UserInput
+                    )
+                    // we won't dispatch pre/post fling events as we have no flinging here, but the
+                    // idea is very similar:
+                    // 1. dispatch pre fling, asking parents to pre consume
+                    // 2. fling (while dispatching scroll events like above for any fling tick)
+                    // 3. dispatch post fling, allowing parent to react to velocity left
+                }
+            )
+    ) {
+        Text(
+            "State: ${basicState.value.roundToInt()}",
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }

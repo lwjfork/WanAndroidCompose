@@ -11,4 +11,4 @@ sealed interface LoadingStatus
 
 object LoadingIdle : LoadingStatus
 object LoadingSuccess : LoadingStatus
-object LoadingError : LoadingStatus
+class LoadingError(val code:Int,val msg:String) : LoadingStatus

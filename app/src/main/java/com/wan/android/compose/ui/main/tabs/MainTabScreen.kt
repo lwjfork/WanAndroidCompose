@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.main.screen
+package com.wan.android.compose.ui.main.tabs
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,11 +52,9 @@ fun MainTabScreen() {
     val mainTabViewModel = viewModel(modelClass = MainTabViewModel::class.java)
     val loadingStatus = mainTabViewModel.initLoading.observeAsState()
     val bannerItems = mainTabViewModel.bannerItems.observeAsState()
+    val dateItems = mainTabViewModel.dateItems.observeAsState()
     val coroutineScope = rememberCoroutineScope()
-    val itemsList = (0..100).toList()
-    val items = remember {
-        itemsList
-    }
+
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -66,6 +62,10 @@ fun MainTabScreen() {
             val bannerItems = mainService.getMainBanner().data
             if (!bannerItems.isNullOrEmpty()) {
                 mainTabViewModel.updateBannerItems(bannerItems)
+            }
+           val dataItems =  mainService.getArticleList(1).data?.datas
+            if (!dataItems.isNullOrEmpty()) {
+                mainTabViewModel.updateDataItems(dataItems)
             }
         }
     }
@@ -93,7 +93,14 @@ fun MainTabScreen() {
                         ImageBanner(bannerItems.value)
                     }
                 }
-                items(items) { Text("Item is $it") }
+                if(!dateItems.value.isNullOrEmpty()){
+                    dateItems.value!!.forEach {
+                        item(key = it) {
+                          Text(text = it.title!!, color = Color.Red)
+                        }
+                    }
+
+                }
             }
 
         }

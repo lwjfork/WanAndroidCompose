@@ -1,4 +1,4 @@
-package com.wan.android.compose.ui.main.screen
+package com.wan.android.compose.ui.main.tabs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,14 +17,15 @@ import androidx.compose.ui.graphics.Color
  * @version: 1.0
  */
 @Composable
-fun ProjectTabScreen() {
+fun SystemTabScreen(){
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "ProjectTabScreen", color = Color.Red)
+        Text(text = "SystemTabScreen", color = Color.Red)
 
     }
 }
+
