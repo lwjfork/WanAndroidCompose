@@ -1,4 +1,4 @@
-package com.wan.android.compose
+package com.wan.android.compose.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
