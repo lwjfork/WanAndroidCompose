@@ -78,7 +78,7 @@ fun MainScreen() {
         .nestedScroll(bottomBarScrollBehavior.nestedScrollConnection)
         .nestedScroll(topBarScrollBehavior.nestedScrollConnection)
     ModalNavigationDrawer(drawerState = drawerState,
-        gesturesEnabled = false,
+        gesturesEnabled = true,
         drawerContent = {
             NavigationDrawerContent(drawerState)
         }) {
