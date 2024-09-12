@@ -7,11 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
+import com.wan.android.compose.ext.toColor
 import com.wan.android.compose.stores.persistent.APPGlobalConfigStore
 import com.wan.android.compose.theme.ThemeColors
 import com.wan.android.compose.theme.readThemeFromAssets
 import com.wan.android.compose.theme.switchAppTheme
-import com.wan.android.compose.theme.toColor
 import com.wan.android.compose.ui.main.MainActivity
 import kotlinx.coroutines.launch
 

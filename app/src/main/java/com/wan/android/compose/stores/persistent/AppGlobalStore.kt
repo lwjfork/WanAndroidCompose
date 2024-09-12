@@ -27,8 +27,3 @@ val Context.APPGlobalConfigStore: DataStore<APPGlobalConfig> by dataStore(
     fileName = "app.pb",
     serializer = AppGlobalStoreSerializer
 )
-
-object AppGlobalStore {
-
-
-}

@@ -10,7 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-
+import com.wan.android.compose.ext.toHexString
+import com.wan.android.compose.stores.memory.GlobalContext
+import com.wan.android.compose.stores.persistent.APPGlobalConfigStore
 
 
 @Composable
@@ -49,7 +51,12 @@ private object AppTheme {
     }
 }
 
-fun switchAppTheme(seedColor: Color) {
+suspend fun switchAppTheme(seedColor: Color) {
+    GlobalContext.getApplication().APPGlobalConfigStore.updateData {
+        it.toBuilder()
+            .setThemeColor(seedColor.toHexString())
+            .build()
+    }
     AppTheme.switch(seedColor)
 }
 
@@ -73,10 +80,13 @@ private val LocalAppColors = staticCompositionLocalOf {
 /* 针对当前主题配置颜色板扩展属性 */
 private val Color.colors: Pair<Color, AppThemeColor>
     @Composable
-    get() = Pair(this, if(isSystemInDarkTheme()){
-        ThemeColors.get(this)!!.darkTheme}else{
-        ThemeColors.get(this)!!.lightTheme
-    })
+    get() = Pair(
+        this, if (isSystemInDarkTheme()) {
+            ThemeColors.get(this)!!.darkTheme
+        } else {
+            ThemeColors.get(this)!!.lightTheme
+        }
+    )
 
 
 val ThemeColors: LinkedHashMap<Color, ThemeColor> = LinkedHashMap(

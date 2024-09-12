@@ -30,12 +30,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.wan.android.compose.component.CircularProgress
+import com.wan.android.compose.ext.toColor
 import com.wan.android.compose.model.MainBannerItem
 import com.wan.android.compose.network.LoadingIdle
 import com.wan.android.compose.network.LoadingSuccess
 import com.wan.android.compose.network.MainService
 import com.wan.android.compose.theme.appColors
-import com.wan.android.compose.theme.toColor
 import com.wan.android.compose.ui.main.vm.MainTabViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

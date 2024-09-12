@@ -3,6 +3,8 @@ package com.wan.android.compose.theme
 import android.content.Context
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import com.wan.android.compose.ext.toCamelCase
+import com.wan.android.compose.ext.toColor
 import org.json.JSONObject
 
 /**
@@ -16,11 +18,11 @@ import org.json.JSONObject
 private fun parseColorPaletteFromJson(jsonObj: JSONObject): ColorPalette {
     val palettes = jsonObj.optJSONObject("palettes")
     val palettesColors: MutableMap<String, Color> = mutableMapOf()
-    palettes?.let {
+    palettes?.let { it ->
         it.keys().forEach { typeColorName ->
             val typeColorJSONObject = palettes.optJSONObject(typeColorName)
             typeColorJSONObject?.keys()?.forEach {
-                palettesColors["${toCamelCase(typeColorName)}${it}"] =
+                palettesColors["${typeColorName.toCamelCase()}${it}"] =
                     typeColorJSONObject.optString(it).toColor()
             }
         }
@@ -239,22 +241,4 @@ fun readThemeFromAssets(context: Context) {
 
 }
 
-fun String.toColor(): Color {
-    return Color(android.graphics.Color.parseColor(this))
-}
 
-fun toCamelCase(str: String): String {
-    val result = StringBuilder()
-    var capitalizeNext = false
-    for (char in str) {
-        if (char == '_' || char == '-') {
-            capitalizeNext = true
-        } else if (capitalizeNext) {
-            result.append(char.toUpperCase())
-            capitalizeNext = false
-        } else {
-            result.append(char)
-        }
-    }
-    return result.toString()
-}

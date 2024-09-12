@@ -40,16 +40,8 @@ class ChangeAppThemeActivity : ComponentActivity() {
                                 .fillMaxWidth()
                                 .clickable {
                                     coroutineScope.launch {
-                                        APPGlobalConfigStore.updateData {
-                                            it
-                                                .toBuilder()
-                                                .setThemeColor(themeColor.key.toHexString())
-                                                .build()
-                                        }
                                         switchAppTheme(themeColor.key)
                                     }
-
-
                                 },
                             color = Color.White
                         )
@@ -58,15 +50,5 @@ class ChangeAppThemeActivity : ComponentActivity() {
             }
 
         }
-    }
-
-    fun Color.toHexString(): String {
-        return String.format(
-            "#%02X%02X%02X%02X",
-            (this.alpha * 255).toInt(),
-            (this.red * 255).toInt(),
-            (this.green * 255).toInt(),
-            (this.blue * 255).toInt()
-        )
     }
 }
