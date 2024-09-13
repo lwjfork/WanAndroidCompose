@@ -1,19 +1,31 @@
 package com.wan.android.compose.component
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.wan.android.compose.R
+import com.wan.android.compose.network.LoadingEmpty
 import com.wan.android.compose.network.LoadingError
 import com.wan.android.compose.network.LoadingIdle
 import com.wan.android.compose.network.LoadingStatus
+import com.wan.android.compose.network.LoadingSuccess
 
 /**
  * @Description:
@@ -31,25 +43,87 @@ fun CircularProgress() {
 }
 
 @Composable
-fun LoadingError() {
-    Column {
+fun LoadingErrorView(clickText: String? = "网络错误请重试", onRetryClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(horizontal = 5.dp, vertical = 5.dp)
+                .clickable(
+                    onClick = onRetryClick,
+                    indication = null,
+                    interactionSource = null
+                ),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_net_error),
+                modifier = Modifier
+                    .height(150.dp)
+                    .width(150.dp),
+                contentDescription = "错误图"
+            )
+            Text(
+                text = clickText ?: "网络错误请重试",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+            )
+        }
+    }
 
-        Text(text = "网络错误请重试")
+}
+
+@Composable
+fun LoadingEmptyView(clickText: String? = "暂无数据看看其他吧") {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(horizontal = 5.dp, vertical = 5.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_data_empty),
+                modifier = Modifier
+                    .height(150.dp)
+                    .width(150.dp),
+                contentDescription = "暂无数据"
+            )
+            Text(
+                text = clickText ?: "暂无数据看看其他吧",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+            )
+        }
     }
 }
 
 @Composable
-fun LoadingStatusView(loadingStatus: LoadingStatus) {
+fun LoadingStatusView(loadingStatus: LoadingStatus = LoadingIdle, onRetryClick: () -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
-        if (loadingStatus == LoadingIdle) {
-            CircularProgress()
-        }
-        if (loadingStatus is LoadingError) {
-            LoadingError()
+        when (loadingStatus) {
+            is LoadingIdle -> CircularProgress()
+            is LoadingSuccess -> {}
+            is LoadingError -> LoadingErrorView(loadingStatus.msg, onRetryClick)
+            is LoadingEmpty -> LoadingEmptyView(loadingStatus.msg)
         }
     }
 }

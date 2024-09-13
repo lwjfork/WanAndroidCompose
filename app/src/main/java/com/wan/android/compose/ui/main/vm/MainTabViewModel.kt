@@ -15,7 +15,7 @@ import com.wan.android.compose.network.LoadingStatus
  * @version: 1.0
  */
 class MainTabViewModel : ViewModel() {
-    private val _initLoading: MutableLiveData<LoadingStatus> = MutableLiveData(LoadingIdle)
+    private val _loadingStatus: MutableLiveData<LoadingStatus> = MutableLiveData(LoadingIdle)
 
     private val _bannerItems: MutableLiveData<List<MainBannerItem>> =
         MutableLiveData(mutableListOf())
@@ -23,12 +23,12 @@ class MainTabViewModel : ViewModel() {
     private val _dateItems: MutableLiveData<List<ArticleListItem>> =
         MutableLiveData(mutableListOf())
 
-    val initLoading: LiveData<LoadingStatus> = _initLoading
+    val loadingStatus: LiveData<LoadingStatus> = _loadingStatus
     val bannerItems: LiveData<List<MainBannerItem>> = _bannerItems
     val dateItems: LiveData<List<ArticleListItem>> = _dateItems
 
-    fun updateInitLoading(isLoading: LoadingStatus) {
-        this._initLoading.value = isLoading
+    fun updateLoadingStatus(loadingStatus: LoadingStatus) {
+        this._loadingStatus.value = loadingStatus
     }
 
     fun updateBannerItems(bannerItems: List<MainBannerItem>?) {

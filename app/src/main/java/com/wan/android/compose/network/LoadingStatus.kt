@@ -11,4 +11,5 @@ sealed interface LoadingStatus
 
 object LoadingIdle : LoadingStatus
 object LoadingSuccess : LoadingStatus
-class LoadingError(val code:Int,val msg:String) : LoadingStatus
+class LoadingEmpty(val msg: String? = "暂无数据，看看其他吧") : LoadingStatus
+class LoadingError(val code: Int, val msg: String?) : LoadingStatus

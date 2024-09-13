@@ -18,8 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,15 +32,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.wan.android.compose.component.CircularProgress
+import com.wan.android.compose.component.LoadingStatusView
 import com.wan.android.compose.ext.toColor
 import com.wan.android.compose.model.MainBannerItem
+import com.wan.android.compose.network.LoadingError
 import com.wan.android.compose.network.LoadingIdle
 import com.wan.android.compose.network.LoadingSuccess
 import com.wan.android.compose.network.MainService
 import com.wan.android.compose.theme.appColors
 import com.wan.android.compose.ui.main.vm.MainTabViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -50,59 +53,68 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainTabScreen() {
     val mainTabViewModel = viewModel(modelClass = MainTabViewModel::class.java)
-    val loadingStatus = mainTabViewModel.initLoading.observeAsState()
+    val loadingStatus = mainTabViewModel.loadingStatus.observeAsState()
     val bannerItems = mainTabViewModel.bannerItems.observeAsState()
     val dateItems = mainTabViewModel.dateItems.observeAsState()
-    val coroutineScope = rememberCoroutineScope()
-
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            val mainService = MainService.getInstance()
-            val bannerItems = mainService.getMainBanner().data
-            if (!bannerItems.isNullOrEmpty()) {
-                mainTabViewModel.updateBannerItems(bannerItems)
-            }
-           val dataItems =  mainService.getArticleList(1).data?.datas
-            if (!dataItems.isNullOrEmpty()) {
-                mainTabViewModel.updateDataItems(dataItems)
-            }
-        }
+    val needInitFirstPage = remember {
+        mutableStateOf(true)
     }
+    PageDataFetcher(needInitFirstPage)
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-
-        LaunchedEffect(Unit) {
-            if (loadingStatus.value is LoadingIdle) {
-                coroutineScope.launch {
-                    delay(3000)
-                    mainTabViewModel.updateInitLoading(LoadingSuccess)
-                }
-            }
-        }
-        if (loadingStatus.value is LoadingIdle) {
-            CircularProgress()
-        } else if (loadingStatus.value is LoadingSuccess) {
+        if (loadingStatus.value is LoadingSuccess) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 if (!bannerItems.value.isNullOrEmpty()) {
                     item {
                         ImageBanner(bannerItems.value)
                     }
                 }
-                if(!dateItems.value.isNullOrEmpty()){
+                if (!dateItems.value.isNullOrEmpty()) {
                     dateItems.value!!.forEach {
                         item(key = it) {
-                          Text(text = it.title!!, color =  MaterialTheme.colorScheme.onSurface)
+                            Text(text = it.title!!, color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
 
                 }
             }
+        }
+        LoadingStatusView(loadingStatus.value!!) {
+            needInitFirstPage.value = true
+        }
+    }
+}
 
+@Composable
+fun PageDataFetcher(initFirstPage: MutableState<Boolean>) {
+    if (!initFirstPage.value) {
+        return
+    }
+    val mainTabViewModel = viewModel(modelClass = MainTabViewModel::class.java)
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            try {
+                mainTabViewModel.updateLoadingStatus(LoadingIdle)
+                val mainService = MainService.getInstance()
+                val bannerItems = mainService.getMainBanner().data
+                if (!bannerItems.isNullOrEmpty()) {
+                    mainTabViewModel.updateBannerItems(bannerItems)
+                }
+                val dataItems = mainService.getArticleList(1).data?.datas
+                if (!dataItems.isNullOrEmpty()) {
+                    mainTabViewModel.updateDataItems(dataItems)
+                }
+                mainTabViewModel.updateLoadingStatus(LoadingSuccess)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                mainTabViewModel.updateLoadingStatus(LoadingError(-1, "网络错误请重试"))
+                initFirstPage.value = false
+            }
         }
     }
 }
