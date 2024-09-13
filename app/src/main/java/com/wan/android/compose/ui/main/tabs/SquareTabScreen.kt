@@ -24,7 +24,7 @@ fun SquareTabScreen(){
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "SquareTabScreen", color = Color.Red)
+        Text(text = "SquareTabScreen", color =  MaterialTheme.colorScheme.onSurface)
 
     }
 }

@@ -24,7 +24,7 @@ fun SystemTabScreen(){
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "SystemTabScreen", color = Color.Red)
+        Text(text = "SystemTabScreen", color =  MaterialTheme.colorScheme.onSurface)
 
     }
 }

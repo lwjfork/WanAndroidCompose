@@ -24,7 +24,7 @@ fun ProjectTabScreen() {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "ProjectTabScreen", color = Color.Red)
+        Text(text = "ProjectTabScreen", color =  MaterialTheme.colorScheme.onSurface)
 
     }
 }

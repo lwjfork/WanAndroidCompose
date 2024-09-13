@@ -96,7 +96,7 @@ fun MainTabScreen() {
                 if(!dateItems.value.isNullOrEmpty()){
                     dateItems.value!!.forEach {
                         item(key = it) {
-                          Text(text = it.title!!, color = Color.Red)
+                          Text(text = it.title!!, color =  MaterialTheme.colorScheme.onSurface)
                         }
                     }
 
@@ -104,7 +104,6 @@ fun MainTabScreen() {
             }
 
         }
-
     }
 }
 

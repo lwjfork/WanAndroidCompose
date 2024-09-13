@@ -48,6 +48,7 @@ import com.wan.android.compose.ui.main.tabs.MainTabScreen
 import com.wan.android.compose.ui.main.tabs.OfficialAccountTabScreen
 import com.wan.android.compose.ui.main.tabs.ProjectTabScreen
 import com.wan.android.compose.ui.main.tabs.SquareTabScreen
+import com.wan.android.compose.ui.main.tabs.SystemTabScreen
 import kotlinx.coroutines.launch
 
 /**
@@ -82,8 +83,7 @@ fun MainScreen() {
         drawerContent = {
             NavigationDrawerContent(drawerState)
         }) {
-        ImmersiveScreenPageContent(
-            modifier = modifier,
+        ImmersiveScreenPageContent(modifier = modifier,
             topBar = { TopBar(drawerState, scrollBehavior = topBarScrollBehavior) },
             bottomBar = {
                 BottomBar(tabs, selectIndex.intValue, bottomBarScrollBehavior) {
@@ -99,8 +99,7 @@ fun MainScreen() {
                     }
                 }
             },
-            content = { PageNavContent(navController, tabs) }
-        )
+            content = { PageNavContent(navController, tabs) })
     }
 }
 
@@ -125,7 +124,7 @@ fun PageNavContent(navHostController: NavHostController, tabs: List<Pair<String,
             OfficialAccountTabScreen()
         }
         composable(tabs[3].first) {
-            SquareTabScreen()
+            SystemTabScreen()
         }
         composable(tabs[4].first) {
             ProjectTabScreen()
@@ -193,21 +192,17 @@ fun NavigationDrawerContent(
     ) {
         Text("Drawer title", modifier = Modifier.padding(16.dp))
         Divider()
-        NavigationDrawerItem(label = { Text(text = "Drawer  关闭") },
-            selected = false,
-            onClick = {
-                scope.launch {
-                    drawerState.apply {
-                        if (isClosed) open() else close()
-                    }
+        NavigationDrawerItem(label = { Text(text = "Drawer  关闭") }, selected = false, onClick = {
+            scope.launch {
+                drawerState.apply {
+                    if (isClosed) open() else close()
                 }
-            })
-        NavigationDrawerItem(label = { Text(text = "切换  主题") },
-            selected = false,
-            onClick = {
-                val intent = Intent()
-                intent.setClass(activity.application, ChangeAppThemeActivity::class.java)
-                activity.startActivity(intent)
-            })
+            }
+        })
+        NavigationDrawerItem(label = { Text(text = "切换  主题") }, selected = false, onClick = {
+            val intent = Intent()
+            intent.setClass(activity.application, ChangeAppThemeActivity::class.java)
+            activity.startActivity(intent)
+        })
     }
 }

@@ -31,7 +31,7 @@ fun OfficialAccountTabScreen(){
         contentAlignment = Alignment.Center
     ) {
 
-        Text(text = "OfficialAccountTabScreen", color = Color.Red, modifier = Modifier.fillMaxWidth().height(200.dp).clickable {
+        Text(text = "OfficialAccountTabScreen", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.fillMaxWidth().height(200.dp).clickable {
 
         })
 
